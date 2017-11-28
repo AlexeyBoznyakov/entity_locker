@@ -1,10 +1,10 @@
 package org.locker.entity_locker;
 
 
-import lombok.Getter;
 import lombok.NonNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 
@@ -20,7 +20,6 @@ public class ProtectedCodeInfo<T> {
     /**
      * Protected entities.
      */
-    @Getter
     private final List<ProtectedEntity<T>> protectedEntities = new ArrayList<>();
 
     /**
@@ -30,5 +29,14 @@ public class ProtectedCodeInfo<T> {
      */
     public void addProtectedEntity(final @NonNull T entityKey, final @NonNull Lock lock) {
         protectedEntities.add(new ProtectedEntity<>(entityKey, lock));
+    }
+
+    /**
+     * Get protected entities.
+     *
+     * @return protected entities
+     */
+    public List<ProtectedEntity<T>> getProtectedEntities() {
+        return Collections.unmodifiableList(protectedEntities);
     }
 }

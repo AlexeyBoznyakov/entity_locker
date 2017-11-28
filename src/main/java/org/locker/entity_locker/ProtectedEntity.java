@@ -7,7 +7,7 @@ import lombok.NonNull;
 import java.util.concurrent.locks.Lock;
 
 /**
- * Class is intended to represent protected entity.
+ * Class(immutable) is intended to represent protected entity.
  *
  * @param <T> type of entity key
  * @author Alexey Boznyakov
@@ -19,11 +19,11 @@ public class ProtectedEntity<T> {
      * Entity key.
      */
     @NonNull
-    private T entityKey;
+    private final T entityKey;
 
     /**
      * Lock object, which is used for protection entity.
      */
     @NonNull
-    private Lock lockForEntity;
+    private final Lock lockForEntity;
 }

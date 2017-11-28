@@ -90,7 +90,7 @@ public class EntityLocker<T> {
      * @throws InterruptedException if current thread has been interrupted
      * @throws NullPointerException if entity key is null
      */
-    protected Lock createNewLockForKey(final @NonNull T entityKey) throws InterruptedException {
+    private Lock createNewLockForKey(final @NonNull T entityKey) throws InterruptedException {
         boolean repeatLocking = false;
         Lock currentLock = null;
         do {
@@ -123,9 +123,10 @@ public class EntityLocker<T> {
      * Run protected code safely. In protected code developer can locks some items by keys.
      *
      * @param protectedCode protected code, which should be executed
+     * @throws InterruptedException if current thread has been interrupted
      * @throws IllegalStateException if there is attempt to run protected code inside another protected code
      */
-    public void runProtectedCode(final @NonNull ProtectedCode protectedCode) {
+    public void runProtectedCode(final @NonNull ProtectedCode protectedCode) throws InterruptedException {
         if (currentProtectedCodeInfo.get() != null) {
             throw new IllegalStateException("Nested protected code is forbidden");
         }
@@ -143,6 +144,7 @@ public class EntityLocker<T> {
                     ChronoUnit.SECONDS.between(startTime, endTime));
         } catch (Throwable ex) {
             log.error("Error during protected code execution", ex);
+            throw ex;
         } finally {
             log.debug("Clear resources after protected code execution");
             clearResourcesAfterProtectedCodeExecution();
@@ -154,7 +156,7 @@ public class EntityLocker<T> {
      * 1. remove locks from {@link EntityLocker#lockTable}
      * 2. unlock lock object.
      */
-    protected void clearResourcesAfterProtectedCodeExecution() {
+    private void clearResourcesAfterProtectedCodeExecution() {
         currentProtectedCodeInfo.get().getProtectedEntities().forEach(l -> {
             log.debug("Unlock lock object for entity with key {} and remove it from table", l.getEntityKey());
             lockTable.remove(l.getEntityKey());

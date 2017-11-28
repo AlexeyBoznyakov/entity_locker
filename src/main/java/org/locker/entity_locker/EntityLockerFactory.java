@@ -50,8 +50,7 @@ public class EntityLockerFactory {
     public <K> EntityLocker<K> getEntityLocker(final @NonNull Class<K> entityKeyClass) {
         // This cast is correct, because we put to Map right EntityLocker<K>:
         // Key - Class<K>, value - EntityLocker<K>
-        @SuppressWarnings("unchecked")
-        EntityLocker<K> existingEntityLocker = entityLockersMap.get(entityKeyClass);
+        @SuppressWarnings("unchecked") final EntityLocker<K> existingEntityLocker = entityLockersMap.get(entityKeyClass);
         if (existingEntityLocker != null) {
             log.debug("Entity locker for entity with entity id class {} is already created", entityKeyClass.getName());
             return existingEntityLocker;
@@ -59,12 +58,11 @@ public class EntityLockerFactory {
         log.debug("Entity locker for entity with entity id class {} isn't created. Create new.", entityKeyClass.getName());
 
         // create new entity locker for entity with id class K
-        EntityLocker<K> newEntityLocker = new EntityLocker<>();
+        final EntityLocker<K> newEntityLocker = new EntityLocker<>();
 
         // This cast is correct, because we put to Map right EntityLocker<K>:
         // Key - Class<K>, value - EntityLocker<K>
-        @SuppressWarnings("unchecked")
-        EntityLocker<K> oldEntityLocker = entityLockersMap.putIfAbsent(entityKeyClass, newEntityLocker);
+        @SuppressWarnings("unchecked") final EntityLocker<K> oldEntityLocker = entityLockersMap.putIfAbsent(entityKeyClass, newEntityLocker);
         return oldEntityLocker == null ? newEntityLocker : oldEntityLocker;
     }
 }
